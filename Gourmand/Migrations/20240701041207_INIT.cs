@@ -17,7 +17,8 @@ namespace Gourmand.Migrations
                 {
                     CategoryID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -74,31 +75,12 @@ namespace Gourmand.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Number = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RegistrationDate = table.Column<DateOnly>(type: "date", nullable: false)
+                    RegistrationDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Restaurant", x => x.RestaurantID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Product",
-                columns: table => new
-                {
-                    ProductID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<float>(type: "real", nullable: false),
-                    CategoryID = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Product", x => x.ProductID);
-                    table.ForeignKey(
-                        name: "FK_Product_Category_CategoryID",
-                        column: x => x.CategoryID,
-                        principalTable: "Category",
-                        principalColumn: "CategoryID");
                 });
 
             migrationBuilder.CreateTable(
@@ -109,9 +91,10 @@ namespace Gourmand.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ClientID = table.Column<int>(type: "int", nullable: true),
-                    CourierID = table.Column<int>(type: "int", nullable: true),
-                    RestaurantID = table.Column<int>(type: "int", nullable: true)
+                    ClientID = table.Column<int>(type: "int", nullable: false),
+                    CourierID = table.Column<int>(type: "int", nullable: false),
+                    RestaurantID = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -120,41 +103,49 @@ namespace Gourmand.Migrations
                         name: "FK_Order_Client_ClientID",
                         column: x => x.ClientID,
                         principalTable: "Client",
-                        principalColumn: "ClientID");
+                        principalColumn: "ClientID",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Order_Courier_CourierID",
                         column: x => x.CourierID,
                         principalTable: "Courier",
-                        principalColumn: "CourierID");
+                        principalColumn: "CourierID",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Order_Restaurant_RestaurantID",
                         column: x => x.RestaurantID,
                         principalTable: "Restaurant",
-                        principalColumn: "RestaurantID");
+                        principalColumn: "RestaurantID",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Menu",
+                name: "Product",
                 columns: table => new
                 {
-                    MenuID = table.Column<int>(type: "int", nullable: false)
+                    ProductID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductID = table.Column<int>(type: "int", nullable: true),
-                    RestaurantID = table.Column<int>(type: "int", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<float>(type: "real", nullable: false),
+                    CategoryID = table.Column<int>(type: "int", nullable: false),
+                    RestaurantID = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Menu", x => x.MenuID);
+                    table.PrimaryKey("PK_Product", x => x.ProductID);
                     table.ForeignKey(
-                        name: "FK_Menu_Product_ProductID",
-                        column: x => x.ProductID,
-                        principalTable: "Product",
-                        principalColumn: "ProductID");
+                        name: "FK_Product_Category_CategoryID",
+                        column: x => x.CategoryID,
+                        principalTable: "Category",
+                        principalColumn: "CategoryID",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Menu_Restaurant_RestaurantID",
+                        name: "FK_Product_Restaurant_RestaurantID",
                         column: x => x.RestaurantID,
                         principalTable: "Restaurant",
-                        principalColumn: "RestaurantID");
+                        principalColumn: "RestaurantID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -163,9 +154,10 @@ namespace Gourmand.Migrations
                 {
                     BasketID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductID = table.Column<int>(type: "int", nullable: false),
+                    OrderID = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    OrderID = table.Column<int>(type: "int", nullable: true),
-                    ProductID = table.Column<int>(type: "int", nullable: true)
+                    IsRemoved = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -174,12 +166,14 @@ namespace Gourmand.Migrations
                         name: "FK_Basket_Order_OrderID",
                         column: x => x.OrderID,
                         principalTable: "Order",
-                        principalColumn: "OrderID");
+                        principalColumn: "OrderID",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Basket_Product_ProductID",
                         column: x => x.ProductID,
                         principalTable: "Product",
-                        principalColumn: "ProductID");
+                        principalColumn: "ProductID",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -191,16 +185,6 @@ namespace Gourmand.Migrations
                 name: "IX_Basket_ProductID",
                 table: "Basket",
                 column: "ProductID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Menu_ProductID",
-                table: "Menu",
-                column: "ProductID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Menu_RestaurantID",
-                table: "Menu",
-                column: "RestaurantID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Order_ClientID",
@@ -221,6 +205,11 @@ namespace Gourmand.Migrations
                 name: "IX_Product_CategoryID",
                 table: "Product",
                 column: "CategoryID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Product_RestaurantID",
+                table: "Product",
+                column: "RestaurantID");
         }
 
         /// <inheritdoc />
@@ -228,9 +217,6 @@ namespace Gourmand.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Basket");
-
-            migrationBuilder.DropTable(
-                name: "Menu");
 
             migrationBuilder.DropTable(
                 name: "Order");
@@ -245,10 +231,10 @@ namespace Gourmand.Migrations
                 name: "Courier");
 
             migrationBuilder.DropTable(
-                name: "Restaurant");
+                name: "Category");
 
             migrationBuilder.DropTable(
-                name: "Category");
+                name: "Restaurant");
         }
     }
 }

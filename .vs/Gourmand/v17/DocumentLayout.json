@@ -3,12 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\John Doe\\Desktop\\Gourmand\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{0519C639-A819-4974-ABE0-0DAF6961849F}|Gourmand\\Gourmand.csproj|c:\\users\\john doe\\desktop\\gourmand\\gourmand\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{0519C639-A819-4974-ABE0-0DAF6961849F}|Gourmand\\Gourmand.csproj|solutionrelative:gourmand\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{0519C639-A819-4974-ABE0-0DAF6961849F}|Gourmand\\Gourmand.csproj|c:\\users\\john doe\\desktop\\gourmand\\gourmand\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0519C639-A819-4974-ABE0-0DAF6961849F}|Gourmand\\Gourmand.csproj|solutionrelative:gourmand\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{0519C639-A819-4974-ABE0-0DAF6961849F}|Gourmand\\Gourmand.csproj|c:\\users\\john doe\\desktop\\gourmand\\gourmand\\filters\\clientfilters\\ensureclientexists.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0519C639-A819-4974-ABE0-0DAF6961849F}|Gourmand\\Gourmand.csproj|solutionrelative:gourmand\\filters\\clientfilters\\ensureclientexists.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -35,27 +31,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "launchSettings.json",
-              "DocumentMoniker": "C:\\Users\\John Doe\\Desktop\\Gourmand\\Gourmand\\Properties\\launchSettings.json",
-              "RelativeDocumentMoniker": "Gourmand\\Properties\\launchSettings.json",
-              "ToolTip": "C:\\Users\\John Doe\\Desktop\\Gourmand\\Gourmand\\Properties\\launchSettings.json",
-              "RelativeToolTip": "Gourmand\\Properties\\launchSettings.json",
-              "ViewState": "AQIAABUAAAAAAAAAAAAAABkAAAAdAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-04-24T14:59:37.436Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\John Doe\\Desktop\\Gourmand\\Gourmand\\Program.cs",
-              "RelativeDocumentMoniker": "Gourmand\\Program.cs",
-              "ToolTip": "C:\\Users\\John Doe\\Desktop\\Gourmand\\Gourmand\\Program.cs",
-              "RelativeToolTip": "Gourmand\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAhAAAA",
+              "Title": "EnsureClientExists.cs",
+              "DocumentMoniker": "C:\\Users\\John Doe\\Desktop\\Gourmand\\Gourmand\\Filters\\ClientFilters\\EnsureClientExists.cs",
+              "RelativeDocumentMoniker": "Gourmand\\Filters\\ClientFilters\\EnsureClientExists.cs",
+              "ToolTip": "C:\\Users\\John Doe\\Desktop\\Gourmand\\Gourmand\\Filters\\ClientFilters\\EnsureClientExists.cs",
+              "RelativeToolTip": "Gourmand\\Filters\\ClientFilters\\EnsureClientExists.cs",
+              "ViewState": "AQIAAAwAAAAAAAAAAAA5wAgAAAAjAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-20T13:06:24.68Z",
+              "WhenOpened": "2024-07-01T05:04:59.492Z",
               "EditorCaption": ""
             }
           ]

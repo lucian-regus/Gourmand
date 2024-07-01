@@ -2,8 +2,9 @@
 using Gourmand.Filters.ClientFilters;
 using Gourmand.Models;
 using Gourmand.Repositories;
+using Gourmand.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace Gourmand.Controllers
 {
@@ -12,12 +13,16 @@ namespace Gourmand.Controllers
     public class ClientController : ControllerBase
     {
         private readonly IClientRepository _clientRepository;
+        private readonly ITokenService _tokenService;
 
-        public ClientController(IClientRepository clientRepository) => _clientRepository = clientRepository;
-
+        public ClientController(IClientRepository clientRepository, ITokenService tokenService)
+        {
+            _clientRepository = clientRepository;
+            _tokenService = tokenService;
+        }
         [HttpGet("{ID}")]
         [TypeFilter(typeof(EnsureIDExists))]
-        public IActionResult GetClient(int ID)
+        public IActionResult GetClientById(int ID)
         {
             var client = HttpContext.Items["Client"] as Client;
 
@@ -31,24 +36,17 @@ namespace Gourmand.Controllers
 
         [HttpPost]
         [TypeFilter(typeof(EnsureNewClient))]
-        public IActionResult AddClient([FromBody]ClientDTO client)
+        public IActionResult register([FromBody]ClientDTO newClient)
         {
-            var newClient = new Client{
-                 Name = client.Name,
-                 Username = client.Username,
-                 Password = client.Password,
-                 Email = client.Email,
-                 Number = client.Number,
-                 RegistrationDate = DateOnly.FromDateTime(DateTime.Now)
-            };
 
             _clientRepository.AddClient(newClient);
 
-            return Ok(client);
+            return Ok();
         }
 
         [HttpPut("{ID}")]
         [TypeFilter(typeof(EnsureIDExists))]
+        [Authorize]
         public IActionResult UpdateClient(int id,[FromBody] ClientDTO client)
         {
             _clientRepository.UpdateClient(HttpContext.Items["Client"] as Client,client);
@@ -62,5 +60,30 @@ namespace Gourmand.Controllers
             _clientRepository.DeleteClient(HttpContext.Items["Client"] as Client);
             return Ok();
         }
+
+        [HttpPost("login")]
+        [TypeFilter(typeof(EnsureClientExists))]
+        public IActionResult Login([FromBody] LoginDTO loginData)
+        {
+            return Ok(_tokenService.GenerateToken(loginData.username));
+        }
+
+        [HttpPut("generateCode")]
+        [TypeFilter(typeof(EnsureEmailExists))]
+        public IActionResult GenerateForgotPasswordCode([FromBody]EmailResetPasswordDTO resetPasswordData)
+        {
+            return Ok(_clientRepository.GenerateCode(HttpContext.Items["Client"] as Client,resetPasswordData));
+        }
+
+        
+        [HttpPut("resetPassword")]
+        [TypeFilter(typeof(EnsureCodeExists))]
+        public IActionResult forgotPassword([FromBody]CodeResetPassordDTO resetPasswordData) 
+        {
+            _clientRepository.ForgotPassowrd(HttpContext.Items["Client"] as Client, resetPasswordData);
+
+            return Ok();
+        }
+        
     }
 }

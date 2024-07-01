@@ -20,5 +20,6 @@ namespace Gourmand.Models
         [Required]
         public ICollection<Order>? Order { get; set; }
         public bool IsDeleted { get; set; }
+        public int ForgotPasswordCode { get; set; }
     }
 }

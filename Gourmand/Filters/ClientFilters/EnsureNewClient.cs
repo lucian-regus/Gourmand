@@ -14,7 +14,7 @@ namespace Gourmand.Filters.ClientFilters
         {
             base.OnActionExecuting(context);
 
-            var client = context.ActionArguments["client"] as ClientDTO;
+            var client = context.ActionArguments["newClient"] as ClientDTO;
             if (client != null)
             {
                 if(_db.Client.Any(x => x.Username == client.Username)) { 
@@ -30,7 +30,7 @@ namespace Gourmand.Filters.ClientFilters
 
                 if (_db.Client.Any(x => x.Number == client.Number))
                 {
-                    context.ModelState.AddModelError("Client", "Number already exists in the database.");
+                    context.ModelState.AddModelError("Client", "Phone number already exists in the database.");
                     context.Result = new BadRequestObjectResult(context.ModelState);
                 }
             }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gourmand.Migrations
 {
     [DbContext(typeof(GourmandDBContext))]
-    [Migration("20240423155235_INIT")]
+    [Migration("20240701041207_INIT")]
     partial class INIT
     {
         /// <inheritdoc />
@@ -33,13 +33,17 @@ namespace Gourmand.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BasketID"));
 
-                    b.Property<int?>("OrderID")
+                    b.Property<bool>("IsRemoved")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OrderID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProductID")
+                    b.Property<int>("ProductID")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int?>("Quantity")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("BasketID");
@@ -58,6 +62,9 @@ namespace Gourmand.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryID"));
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -146,29 +153,6 @@ namespace Gourmand.Migrations
                     b.ToTable("Courier");
                 });
 
-            modelBuilder.Entity("Gourmand.Models.Menu", b =>
-                {
-                    b.Property<int>("MenuID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MenuID"));
-
-                    b.Property<int?>("ProductID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("RestaurantID")
-                        .HasColumnType("int");
-
-                    b.HasKey("MenuID");
-
-                    b.HasIndex("ProductID");
-
-                    b.HasIndex("RestaurantID");
-
-                    b.ToTable("Menu");
-                });
-
             modelBuilder.Entity("Gourmand.Models.Order", b =>
                 {
                     b.Property<int>("OrderID")
@@ -181,16 +165,19 @@ namespace Gourmand.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ClientID")
+                    b.Property<int>("ClientID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("CourierID")
+                    b.Property<int>("CourierID")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("RestaurantID")
+                    b.Property<int>("RestaurantID")
                         .HasColumnType("int");
 
                     b.HasKey("OrderID");
@@ -212,8 +199,11 @@ namespace Gourmand.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductID"));
 
-                    b.Property<int?>("CategoryID")
+                    b.Property<int>("CategoryID")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -222,9 +212,14 @@ namespace Gourmand.Migrations
                     b.Property<float>("Price")
                         .HasColumnType("real");
 
+                    b.Property<int>("RestaurantID")
+                        .HasColumnType("int");
+
                     b.HasKey("ProductID");
 
                     b.HasIndex("CategoryID");
+
+                    b.HasIndex("RestaurantID");
 
                     b.ToTable("Product");
                 });
@@ -244,6 +239,9 @@ namespace Gourmand.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -271,46 +269,67 @@ namespace Gourmand.Migrations
 
             modelBuilder.Entity("Gourmand.Models.Basket", b =>
                 {
-                    b.HasOne("Gourmand.Models.Order", null)
+                    b.HasOne("Gourmand.Models.Order", "Order")
                         .WithMany("Basket")
-                        .HasForeignKey("OrderID");
+                        .HasForeignKey("OrderID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("Gourmand.Models.Product", null)
+                    b.HasOne("Gourmand.Models.Product", "Product")
                         .WithMany("Basket")
-                        .HasForeignKey("ProductID");
-                });
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-            modelBuilder.Entity("Gourmand.Models.Menu", b =>
-                {
-                    b.HasOne("Gourmand.Models.Product", null)
-                        .WithMany("Menu")
-                        .HasForeignKey("ProductID");
+                    b.Navigation("Order");
 
-                    b.HasOne("Gourmand.Models.Restaurant", null)
-                        .WithMany("Menu")
-                        .HasForeignKey("RestaurantID");
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Gourmand.Models.Order", b =>
                 {
-                    b.HasOne("Gourmand.Models.Client", null)
+                    b.HasOne("Gourmand.Models.Client", "Client")
                         .WithMany("Order")
-                        .HasForeignKey("ClientID");
+                        .HasForeignKey("ClientID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("Gourmand.Models.Courier", null)
+                    b.HasOne("Gourmand.Models.Courier", "Courier")
                         .WithMany("Order")
-                        .HasForeignKey("CourierID");
+                        .HasForeignKey("CourierID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.HasOne("Gourmand.Models.Restaurant", null)
+                    b.HasOne("Gourmand.Models.Restaurant", "Restaurant")
                         .WithMany("Order")
-                        .HasForeignKey("RestaurantID");
+                        .HasForeignKey("RestaurantID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Courier");
+
+                    b.Navigation("Restaurant");
                 });
 
             modelBuilder.Entity("Gourmand.Models.Product", b =>
                 {
-                    b.HasOne("Gourmand.Models.Category", null)
+                    b.HasOne("Gourmand.Models.Category", "Category")
                         .WithMany("Product")
-                        .HasForeignKey("CategoryID");
+                        .HasForeignKey("CategoryID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Gourmand.Models.Restaurant", "Restaurant")
+                        .WithMany("Products")
+                        .HasForeignKey("RestaurantID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Restaurant");
                 });
 
             modelBuilder.Entity("Gourmand.Models.Category", b =>
@@ -336,15 +355,13 @@ namespace Gourmand.Migrations
             modelBuilder.Entity("Gourmand.Models.Product", b =>
                 {
                     b.Navigation("Basket");
-
-                    b.Navigation("Menu");
                 });
 
             modelBuilder.Entity("Gourmand.Models.Restaurant", b =>
                 {
-                    b.Navigation("Menu");
-
                     b.Navigation("Order");
+
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }
